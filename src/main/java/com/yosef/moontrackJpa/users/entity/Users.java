@@ -41,6 +41,11 @@ public class Users {
   @Column(name = "password", nullable = false, length = 100)
   private String password;
 
+  @JsonIgnore
+  @Size(max = 4)
+  @Column(name = "pin", length = 4)
+  private String pin;
+
   @Size(max = 255)
   @Column(name = "avatar", length = 255)
   private String avatar;

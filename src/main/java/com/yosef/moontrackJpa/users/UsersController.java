@@ -7,6 +7,7 @@ import com.yosef.moontrackJpa.users.service.UsersService;
 import lombok.extern.java.Log;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,7 +18,7 @@ import java.util.List;
 public class UsersController {
   private final UsersService usersService;
 
-  public UsersController (UsersService usersService, AuthenticationManager authenticationManager) {
+  public UsersController(UsersService usersService, AuthenticationManager authenticationManager) {
     this.usersService = usersService;
   }
 
@@ -27,9 +28,13 @@ public class UsersController {
   }
 
   @PostMapping("/register")
-  public ResponseEntity<?> register (@RequestBody RegisterDTO registerDTO) {
+  public ResponseEntity<?> register(@Validated @RequestBody RegisterDTO registerDTO) {
     return Response.successResponse("User register success", usersService.register(registerDTO));
   }
 
+  @GetMapping("/profile/{id}")
+  public ResponseEntity<Response<Users>> getProfile(@PathVariable Long id) {
+    return Response.successResponse("Get profile success", usersService.findById(id));
+  }
 
 }

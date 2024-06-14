@@ -1,6 +1,10 @@
 package com.yosef.moontrackJpa.auth.service.impl;
 
+import com.yosef.moontrackJpa.auth.dto.LoginRequestDto;
+import com.yosef.moontrackJpa.auth.dto.SetupPinRequestDto;
 import com.yosef.moontrackJpa.auth.service.AuthService;
+import com.yosef.moontrackJpa.exceptions.applicationException.ApplicationException;
+import com.yosef.moontrackJpa.users.entity.Users;
 import com.yosef.moontrackJpa.users.repository.UsersRepository;
 import lombok.extern.java.Log;
 import org.springframework.security.core.Authentication;
@@ -13,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -50,4 +55,32 @@ public class AuthServiceImpl implements AuthService {
 
     return jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
   }
+
+  @Override
+  public String resetPassword(LoginRequestDto requestDto) {
+    Optional<Users> usersOptional = usersRepository.findByEmail(requestDto.getEmail());
+    if (usersOptional.isPresent()) {
+      Users user = usersOptional.get();
+      String encodedNewPassword = passwordEncoder.encode(requestDto.getPassword());
+      user.setPassword(encodedNewPassword);
+      usersRepository.save(user);
+      return "Reset Password success";
+    }
+    throw new ApplicationException("User not found");
+  }
+
+  @Override
+  public String setupPin(SetupPinRequestDto requestDto) {
+    Optional<Users> usersOptional = usersRepository.findByEmail(requestDto.getEmail());
+    if (usersOptional.isPresent()) {
+      Users user = usersOptional.get();
+      String encodedPin = passwordEncoder.encode(requestDto.getPin());
+      user.setPin(encodedPin);
+      usersRepository.save(user);
+      return "Setup pin success";
+    }
+    throw new ApplicationException("Setup pin failed");
+  }
+
+
 }
