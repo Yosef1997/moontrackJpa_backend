@@ -42,8 +42,8 @@ public class Users {
   private String password;
 
   @JsonIgnore
-  @Size(max = 4)
-  @Column(name = "pin", length = 4)
+  @Size(max = 100)
+  @Column(name = "pin", length = 100)
   private String pin;
 
   @Size(max = 255)
